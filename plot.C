@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 void plot(){
 
   // opening files
@@ -10,10 +12,6 @@ void plot(){
   TH1F * h_n_2 = (TH1F*)f2.Get("minv");
   TH1F * h_n_3 = (TH1F*)f3.Get("minv");
 
-  TH1F * h_x_1 = (TH1F*)f1.Get("h_x");
-  TH1F * h_x_2 = (TH1F*)f2.Get("h_x");
-  TH1F * h_x_3 = (TH1F*)f3.Get("h_x");
-
   // set line colors
 
 
@@ -25,9 +23,12 @@ void plot(){
    float s3=500;
    float s2=5;
    float n1, n2, n3, nc1, nc2, nc3;
-   nc1=h_x_1->GetEntries();
-   nc2=h_x_2->GetEntries();
-   nc3=h_x_3->GetEntries();
+   FILE *f=fopen("liczba.txt", "r");
+   
+   fscan(f,"%1d%",nc1);
+   fscan(f,"%1d%",nc2);
+   fscan(f,"%1d%",nc3);
+   
    n1=h_n_1->GetEntries();
    n2=h_n_2->GetEntries();
    n3=h_n_3->GetEntries();
