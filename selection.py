@@ -28,13 +28,17 @@ minus = std.vector('int')()
 minv=ROOT.TH1F("minv", "", 300, 0, 40)
 h_x=TH1F("h_x", "", 100, -1e-4, 1e-4)
 lst=[chainS,chainB,chainD]
-lst2=["out_sig2.root","out_bkg2.root","out_dat2.root"]
+lst2=['"out_sig2.root"','"out_bkg2.root"','"out_dat2.root"']
 file=open("liczba.txt", "w")
 for x in range(3):
-	for chain in (lst[x]):
+	ch=lst[x]
+	print type(ch)
+	print type(chainS)
+	for chain in (ch):
 	#    print chain
-		od=TFile(lst2[x], "recreate")
-		entries = chain.GetEntriesFast()
+		a=lst2[x]
+		od=TFile(a, "recreate")
+		entries = chain.GetEntries()
 		noe+=entries
 		
 		  
@@ -79,8 +83,6 @@ for x in range(3):
 						#pT2 = minusV.Pt()
 						if (abs(deltaPhi)>1 and abs(deltaZ)<0.04):
 							invMass = (plusV+minusV).M()
-							print j
-							print invMass
 							minv.Fill(invMass)
 						   
 	file.write(str(noe))
