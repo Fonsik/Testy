@@ -1,9 +1,9 @@
 void plot(){
 
   // opening files
-  TFile f1("out_dat.root");
-  TFile f2("out_sig.root");
-  TFile f3("out_bkg.root");
+  TFile f1("out_dat2.root");
+  TFile f2("out_sig2.root");
+  TFile f3("out_bkg2.root");
 
   // get histograms from the files
   TH1F * h_n_1 = (TH1F*)f1.Get("minv");
@@ -18,7 +18,7 @@ void plot(){
 
 
   TCanvas c;
-  c.SaveAs("plots.pdf["); // opening pdf
+  c.SaveAs("plots2.pdf["); // opening pdf
 
   // draw all histograms
 
@@ -51,9 +51,9 @@ h_n_3->SetLineColor(3);
   h_n_2->DrawNormalized("same");
  //h_n_3->Draw("same");
 
- c.SaveAs("plots.pdf");
+ c.SaveAs("plots2.pdf");
  c.Clear();
-  c.SaveAs("plots.pdf]"); // closing pdf
+  c.SaveAs("plots2.pdf]"); // closing pdf
 
 
 }

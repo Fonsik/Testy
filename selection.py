@@ -6,29 +6,36 @@ from ROOT import *
 #from ROOT import std
 import math
 
-
 chainS = ROOT.TChain("ntuple","")
 chainS.Add("MC_resonance_search_signal.root/ntuple")
 
 chainB = TChain("ntuple","")
 chainB.Add("MC_resonance_search_background_small.root/ntuple")
 
+chainD = TChain("ntuple","")
+chainD.Add("data.root/ntuple")
+
+od=TFile("out_dat2.root", "recreate")
+os=TFile("out_sig2.root", "recreate")
+ob=TFile("out_bkg2.root", "recreate")
+noe=TFile("out_bkg2.txt", "recreate")
+
 #chainB.Print()
 #fin = ROOT.TFile.Open("ntuple.root")
 #ntuple = fin.Get('ntuple')
 #ntuple.Print()
 
-
+noe=0
 plus = std.vector('int')()
 minus = std.vector('int')()
 minv=ROOT.TH1F("minv", "", 300, 0, 40)
 h_x=TH1F("h_x", "", 100, -1e-4, 1e-4)
 
-for chain in {chainS, chainB}:
+for chain in {chainS, chainB, chainD}:
 #    print chain
 
     entries = chain.GetEntriesFast()
-
+    noe+=entries    
 
 
     for jentry in xrange( entries ):
@@ -49,7 +56,6 @@ for chain in {chainS, chainB}:
 
       if chain.x.size()>=2:
 	for i in xrange(chain.x.size()):
-         h_x.Fill(chain.x[i])
          # some cut-like selection
          if chain.mu_like[i]>0.85:
           if ( chain == chainS and abs(chain.id[i])==13) or (chain == chainB ):
@@ -73,9 +79,9 @@ for chain in {chainS, chainB}:
               pT2 = minusV.Pt()
               mu_like_1=chain.mu_like[plus[i]]
               mu_like_2=chain.mu_like[minus[j]]
-              if abs(deltaPhi)>1 and abs(deltaZ)<0.04
-               invMass = (plusV+minusV).M()
-               minv.Fill(invMass)
+              #if abs(deltaPhi)>1 and abs(deltaZ)<0.04
+               #invMass = (plusV+minusV).M()
+               #minv.Fill(invMass)
 
 #TMVA::TMVAGui()
 #ROOT.TMVA.TMVAGui()
