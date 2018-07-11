@@ -1,8 +1,8 @@
 # TMVA linear discriminators
 
 import ROOT
-#from ROOT import TChain, TSelector, TTree
-from ROOT import *
+from ROOT import TChain, TSelector, TTree, TFile, TLorentzVector, std
+#from ROOT import *
 #from ROOT import std
 import math
 
@@ -31,11 +31,11 @@ minv=ROOT.TH1F("minv", "", 300, 0, 40)
 lst=[chainS,chainB,chainD]
 lst2=["out_sig2.root","out_bkg2.root","out_dat2.root"]
 file=open("liczba.txt", "w")
-for x in range(3):
-	ch=lst[x]
-	a=lst2[x]
+for xr in range(3):
+	ch=lst[xr]
+	a=lst2[xr]
 	od=TFile(a, "recreate")
-	for chain in (ch):
+	for chain in lst[xr]:
 	    print chain
 	    entries = chain.GetEntries()
 	    noe+=entries
@@ -59,32 +59,32 @@ for x in range(3):
 	    minus.clear()
 
 
-	    if chain.x.size()>=2:
-			for i in xrange(chain.x.size()):
-				if (abs(chain.id[i])==13 or chain.mu_like[i]>0.85):
-					if chain.charge[i]==1:
-						plus.push_back(i)
-					elif chain.charge[i]==-1:
-						minus.push_back(i)
+	    #if chain.x.size()>=2:
+	    for i in xrange(chain.x.size()):
+			if (abs(chain.id[i])==13 or chain.mu_like[i]>0.85):
+    				if chain.charge[i]==1:
+					plus.push_back(i)
+			elif chain.charge[i]==-1:
+					minus.push_back(i)
 						
 			 
 
-				r1=plus.size()
-				r2=minus.size()  
-				for i in xrange(r1):
-					Vp.SetPxPyPzE(chain.px[plus[i]],chain.py[plus[i]],chain.pz[plus[i]],chain.e[plus[i]])
-					for j in xrange(r2):
-						Vm.SetPxPyPzE(chain.px[minus[j]],chain.py[minus[j]],chain.pz[minus[j]],chain.e[minus[j]])
-						deltaPhi=Vp.DeltaPhi(Vm)
-						deltaZ=chain.z[plus[i]]-chain.z[minus[j]]
-						#pT1 = plusV.Pt()
-						#pT2 = minusV.Pt()
-						if (abs(deltaPhi)>1 and abs(deltaZ)<0.04):
-							invMass = (Vp+Vm).M()
-							minv.Fill(invMass)
-							print invMass
-			plus.clear()
-			minus.clear()	   
+			r1=plus.size()
+			r2=minus.size()  
+			for i in xrange(r1):
+				Vp.SetPxPyPzE(chain.px[plus[i]],chain.py[plus[i]],chain.pz[plus[i]],chain.e[plus[i]])
+				for j in xrange(r2):
+					Vm.SetPxPyPzE(chain.px[minus[j]],chain.py[minus[j]],chain.pz[minus[j]],chain.e[minus[j]])
+					deltaPhi=Vp.DeltaPhi(Vm)
+					deltaZ=chain.z[plus[i]]-chain.z[minus[j]]
+					#pT1 = plusV.Pt()
+					#pT2 = minusV.Pt()
+					if (abs(deltaPhi)>1 and abs(deltaZ)<0.04):
+						invMass = (Vp+Vm).M()
+						minv.Fill(invMass)
+						print invMass
+	    plus.clear()
+	    minus.clear()	   
 	file.write(str(noe))
 	file.write("\n")
 	noe=0				   
