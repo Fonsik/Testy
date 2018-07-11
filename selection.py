@@ -23,23 +23,22 @@ chainD.Add("data.root/ntuple")
 #ntuple.Print()
 
 noe=0
+Vp=TLorentzVector(0,0,0,0)
+Vm=TLorentzVector(0,0,0,0)
 plus = std.vector('int')()
 minus = std.vector('int')()
 minv=ROOT.TH1F("minv", "", 300, 0, 40)
-h_x=TH1F("h_x", "", 100, -1e-4, 1e-4)
 lst=[chainS,chainB,chainD]
-lst2=['"out_sig2.root"','"out_bkg2.root"','"out_dat2.root"']
+lst2=["out_sig2.root","out_bkg2.root","out_dat2.root"]
 file=open("liczba.txt", "w")
 for x in range(3):
 	ch=lst[x]
-	print type(ch)
-	print type(chainS)
+	a=lst2[x]
+	od=TFile(a, "recreate")
 	for chain in (ch):
-	#    print chain
-		a=lst2[x]
-		od=TFile(a, "recreate")
-		entries = chain.GetEntries()
-		noe+=entries
+	    print chain
+	    entries = chain.GetEntries()
+	    noe+=entries
 		
 		  
 
@@ -56,35 +55,36 @@ for x in range(3):
 			# continue
 		 
 		  #find pairs
-		plus.clear()
-		minus.clear()
+	    plus.clear()
+	    minus.clear()
 
 
-		if chain.x.size()>=2:
+	    if chain.x.size()>=2:
 			for i in xrange(chain.x.size()):
 				if (abs(chain.id[i])==13 or chain.mu_like[i]>0.85):
 					if chain.charge[i]==1:
 						plus.push_back(i)
 					elif chain.charge[i]==-1:
 						minus.push_back(i)
-
+						
 			 
 
-				   
-				for i in xrange(plus.size()):
-					plusV = TLorentzVector(0,0,0,0)
-					plusV.SetPxPyPzE(chain.px[plus[i]],chain.py[plus[i]],chain.pz[plus[i]],chain.e[plus[i]])
-					for j in range(minus.size()):
-						minusV = TLorentzVector(0,0,0,0)
-						minusV.SetPxPyPzE(chain.px[minus[j]],chain.py[minus[j]],chain.pz[minus[j]],chain.e[minus[j]])
-						deltaPhi=plusV.DeltaPhi(minusV)
-						deltaZ=chain.z[minus[j]]-chain.z[plus[i]]
+				r1=plus.size()
+				r2=minus.size()  
+				for i in xrange(r1):
+					Vp.SetPxPyPzE(chain.px[plus[i]],chain.py[plus[i]],chain.pz[plus[i]],chain.e[plus[i]])
+					for j in xrange(r2):
+						Vm.SetPxPyPzE(chain.px[minus[j]],chain.py[minus[j]],chain.pz[minus[j]],chain.e[minus[j]])
+						deltaPhi=Vp.DeltaPhi(Vm)
+						deltaZ=chain.z[plus[i]]-chain.z[minus[j]]
 						#pT1 = plusV.Pt()
 						#pT2 = minusV.Pt()
 						if (abs(deltaPhi)>1 and abs(deltaZ)<0.04):
-							invMass = (plusV+minusV).M()
+							invMass = (Vp+Vm).M()
 							minv.Fill(invMass)
-						   
+							print invMass
+			plus.clear()
+			minus.clear()	   
 	file.write(str(noe))
 	file.write("\n")
 	noe=0				   
