@@ -30,11 +30,13 @@ minus = std.vector('int')()
 lst=[chainS,chainB,chainD]
 lst2=["out_sig2.root","out_bkg2.root","out_dat2.root"]
 file=open("liczba.txt", "w")
-for xr in range(3):
+xr=0;
+for chain in {chainS, chainB, chainD}:
 	a=lst2[xr]
 	od=TFile(a, "recreate")
+	xr+=1
 	minv=ROOT.TH1F("minv", "", 300, 0, 40)
-	chain=lst[xr]
+	#chain=lst[xr]
 	entries = chain.GetEntries()
 	noe+=entries
 	print "entries ",entries
