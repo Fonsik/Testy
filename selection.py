@@ -1,8 +1,8 @@
 # TMVA linear discriminators
 
 import ROOT
-#from ROOT import TChain, TSelector, TTree
-from ROOT import *
+from ROOT import TChain, TSelector, TTree, TFile, TLorentzVector, std
+#from ROOT import *
 #from ROOT import std
 import math
 
@@ -27,64 +27,60 @@ Vp=TLorentzVector(0,0,0,0)
 Vm=TLorentzVector(0,0,0,0)
 plus = std.vector('int')()
 minus = std.vector('int')()
-minv=ROOT.TH1F("minv", "", 300, 0, 40)
 lst=[chainS,chainB,chainD]
 lst2=["out_sig2.root","out_bkg2.root","out_dat2.root"]
 file=open("liczba.txt", "w")
-for x in range(3):
-	ch=lst[x]
-	a=lst2[x]
+for xr in range(3):
+	a=lst2[xr]
 	od=TFile(a, "recreate")
-	for chain in (ch):
-	    print chain
-	    entries = chain.GetEntries()
-	    noe+=entries
-		
-		  
+	minv=ROOT.TH1F("minv", "", 300, 0, 40)
+	chain=lst[xr]
+	entries = chain.GetEntries()
+	noe+=entries
+	print "entries ",entries
+	print chain  
 
 
-		#for jentry in xrange( entries ):
-		# get the next tree in the chain
-		 # ientry = chain.LoadTree(jentry)
-		  #if ientry < 0:
-			# break
+	for jentry in xrange( entries ):
+		#get the next tree in the chain
+		ientry = chain.LoadTree(jentry)
+		if ientry < 0:
+			break
 
-		# verify file/tree/chain integrity
-		  #nb = chain.GetEntry( jentry )
-		  #if nb <= 0:
-			# continue
+		#verify file/tree/chain integrity
+		nb = chain.GetEntry( jentry )
+		if nb <= 0:
+			continue
 		 
 		  #find pairs
-	    plus.clear()
-	    minus.clear()
-
-
-	    if chain.x.size()>=2:
+		plus.clear()
+		minus.clear()
+	
+		if chain.x.size()>=2: 
 			for i in xrange(chain.x.size()):
-				if (abs(chain.id[i])==13 or chain.mu_like[i]>0.85):
-					if chain.charge[i]==1:
-						plus.push_back(i)
-					elif chain.charge[i]==-1:
-						minus.push_back(i)
+				if chain.mu_like[i]>0.85:
+					if ( chain == chainS and abs(chain.id[i])==13) or (chain == chainB or chain==chainD ):
+						if chain.charge[i]==1:
+							plus.push_back(i)
+						elif chain.charge[i]==-1:
+							minus.push_back(i)
 						
 			 
 
-				r1=plus.size()
-				r2=minus.size()  
-				for i in xrange(r1):
-					Vp.SetPxPyPzE(chain.px[plus[i]],chain.py[plus[i]],chain.pz[plus[i]],chain.e[plus[i]])
-					for j in xrange(r2):
-						Vm.SetPxPyPzE(chain.px[minus[j]],chain.py[minus[j]],chain.pz[minus[j]],chain.e[minus[j]])
-						deltaPhi=Vp.DeltaPhi(Vm)
-						deltaZ=chain.z[plus[i]]-chain.z[minus[j]]
-						#pT1 = plusV.Pt()
-						#pT2 = minusV.Pt()
-						if (abs(deltaPhi)>1 and abs(deltaZ)<0.04):
-							invMass = (Vp+Vm).M()
-							minv.Fill(invMass)
-							print invMass
-			plus.clear()
-			minus.clear()	   
+		r1=plus.size()
+		r2=minus.size()  
+		for i in xrange(r1):
+			Vp.SetPxPyPzE(chain.px[plus[i]],chain.py[plus[i]],chain.pz[plus[i]],chain.e[plus[i]])
+			for j in xrange(r2):
+				Vm.SetPxPyPzE(chain.px[minus[j]],chain.py[minus[j]],chain.pz[minus[j]],chain.e[minus[j]])
+				deltaPhi=Vp.DeltaPhi(Vm)
+				deltaZ=chain.z[plus[i]]-chain.z[minus[j]]
+				#pT1 = plusV.Pt()
+				#pT2 = minusV.Pt()
+				if (abs(deltaPhi)>2 and abs(deltaZ)<0.04):
+					invMass = (Vp+Vm).M()
+					minv.Fill(invMass)
+			   
 	file.write(str(noe))
 	file.write("\n")
 	noe=0				   
@@ -96,7 +92,3 @@ file.close()
 
 #TMVA::TMVAGui()
 #ROOT.TMVA.TMVAGui()
-
-
-
-
