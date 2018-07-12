@@ -64,10 +64,10 @@ h_n_1->SetLineColor(1);
 h_n_2->SetLineColor(2);
 h_n_3->SetLineColor(3);
 
-	h_n_1->Rebin(3);
-	h_n_2->Rebin(3);
-	h_n_1->DrawNormalized("e");
-	h_n_2->DrawNormalized("same");
+	h_n_1->Rebin(5);
+	h_n_2->Rebin(5);
+	h_n_2->DrawNormalized("hist");
+	h_n_1->DrawNormalized("same");
  //h_n_3->Draw("same");
 
  c.SaveAs("plots2.pdf");
@@ -83,10 +83,11 @@ h_n_3->SetLineColor(3);
 	h_n_5->SetLineColor(2);
 	h_n_6->SetLineColor(3);
 
-	h_n_4->Rebin(3);
-	h_n_5->Rebin(3);
-	h_n_4->DrawNormalized("e");
-	h_n_5->DrawNormalized("same");
+	h_n_4->Rebin(5);
+	h_n_5->Rebin(5);
+	
+	h_n_5->DrawNormalized("hist");
+	h_n_4->DrawNormalized("e same");
 	c.SaveAs("plots2.pdf");
   
   c.SaveAs("plots2.pdf]"); // closing pdf

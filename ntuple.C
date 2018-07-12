@@ -75,7 +75,7 @@ float sa, sb, sab;
         {
         angl=VGp[i].DeltaPhi(VGm[j]);
         dis=VGpd[i][2]-VGmd[j][2];
-        if (abs(angl)>2&&abs(dis)<0.04)
+        if (abs(angl)>1&&abs(dis)<0.04)
       {h_minv.Fill((VGp[i]+VGm[j]).M());}
         }
 
