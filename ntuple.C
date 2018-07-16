@@ -38,21 +38,21 @@ void ntuple::Loop()
    
    
 
-      out->Branch("xp", &xp, "xp/D");
-      out->Branch("yp", &yp, "yp/D");
-	    out->Branch("zp", &zp, "zp/D");
-      out->Branch("xm", &pxp, "zm/D");
-      out->Branch("ym", &pyp, "ym/D");
-      out->Branch("zm", &pzp, "zm/D");
-      out->Branch("pxp", &xm, "pxp/D");
-      out->Branch("pyp", &ym, "pyp/D");
-      out->Branch("pzp", &zm, "pzp/D");
-      out->Branch("pxm", &pxm, "pxm/D");
-      out->Branch("pym", &pym, "pym/D");
-      out->Branch("pzm", &pzm, "pzm/D");
-      out->Branch("dist", &dist, "dist/D");
-      out->Branch("mu_likep", &mu_likep, "mu_likep/D");
-      out->Branch("mu_likem", &mu_likem, "mu_likem/D");
+      out->Branch("xp", &xp, "xp/F");
+      out->Branch("yp", &yp, "yp/F");
+	    out->Branch("zp", &zp, "zp/F");
+      out->Branch("xm", &pxp, "zm/F");
+      out->Branch("ym", &pyp, "ym/F");
+      out->Branch("zm", &pzp, "zm/F");
+      out->Branch("pxp", &xm, "pxp/F");
+      out->Branch("pyp", &ym, "pyp/F");
+      out->Branch("pzp", &zm, "pzp/F");
+      out->Branch("pxm", &pxm, "pxm/F");
+      out->Branch("pym", &pym, "pym/F");
+      out->Branch("pzm", &pzm, "pzm/F");
+      out->Branch("dist", &dist, "dist/F");
+      out->Branch("mu_likep", &mu_likep, "mu_likep/F");
+      out->Branch("mu_likem", &mu_likem, "mu_likem/F");
       
       out->Branch("minv", &minv, "MINV/F");
       out->Branch("DeltPhi", &angl, "DP/F");

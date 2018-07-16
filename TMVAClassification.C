@@ -203,6 +203,7 @@ int TMVAClassification( TString myMethodList = "" )
    // front of the "Silent" argument in the option string
    TMVA::Factory *factory = new TMVA::Factory( "TMVAClassification", outputFile,
                                                "!V:!Silent:Color:DrawProgressBar:Transformations=I;D;P;G,D:AnalysisType=Classification" );
+   // 
 
    TMVA::DataLoader *dataloader=new TMVA::DataLoader("dataset");
    // If you wish to modify default settings
@@ -292,6 +293,7 @@ int TMVAClassification( TString myMethodList = "" )
    // Apply additional cuts on the signal and background samples (can be different)
    TCut mycuts = ""; // for example: TCut mycuts = "abs(var1)<0.5 && abs(var2-0.5)<1";
    TCut mycutb = ""; // for example: TCut mycutb = "abs(var1)<0.5";
+   //abs(Varxp)<0.5 && abs(Varyp)<5 && abs(Varzp)<100 && abs(Varxm)<500 && abs(Varym)<50 && abs(Varzm)< 
 
    // Tell the dataloader how to use the training and testing events
    //
