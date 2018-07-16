@@ -3,21 +3,30 @@
 void plot(){
 
   // opening files
-  TFile f1("out_dat2.root");
-  TFile f2("out_sig2.root");
-  TFile f3("out_bkg2.root");
-  TFile f4("out_dat.root");
-  TFile f5("out_sig.root");
-  TFile f6("out_bkg.root");
+  //TFile f1("out_dat2.root");
+  //TFile f2("out_sig2.root");
+  //TFile f3("out_bkg2.root");
+  TFile ff("TMVApp.root");
+
 
   // get histograms from the files
-  TH1F * h_n_1 = (TH1F*)f1.Get("minv");
-  TH1F * h_n_2 = (TH1F*)f2.Get("minv");
-  TH1F * h_n_3 = (TH1F*)f3.Get("minv");
-  
-  TH1F * h_n_4 = (TH1F*)f4.Get("minv");
-  TH1F * h_n_5 = (TH1F*)f5.Get("minv");
-  TH1F * h_n_6 = (TH1F*)f6.Get("minv");
+  //TH1F * h_n_1 = (TH1F*)f1.Get("minv");
+  //TH1F * h_n_2 = (TH1F*)f2.Get("minv");
+  //TH1F * h_n_3 = (TH1F*)f3.Get("minv");
+
+  //TH1F * BDT1 = (TH1F*)ff.Get("minvBDT1");
+ // TH1F * BDT2 = (TH1F*)ff.Get("minvBDT2");
+  TH1F * BDT3 = (TH1F*)ff.Get("minvBDT3");
+
+ /* TH1F * Like1 = (TH1F*)ff.Get("minvLike1");
+  TH1F * Like2 = (TH1F*)ff.Get("minvLike2");
+  TH1F * Like3 = (TH1F*)ff.Get("minvLike3");
+  TH1F * LikeD = (TH1F*)ff.Get("minvD");
+  TH1F * LikeP = (TH1F*)ff.Get("minvPCA");
+
+  TH1F * MLP1 = (TH1F*)ff.Get("minvMLP1");
+  TH1F * MLP2 = (TH1F*)ff.Get("minvMLP2");
+  TH1F * MLP3 = (TH1F*)ff.Get("minvMLP3");*/
 
   // set line colors
 
@@ -27,69 +36,80 @@ void plot(){
 
   // draw all histograms
 
-   float s3=500;
-   float s2=5;
-   float n1, n2, n3, nc1, nc2, nc3, n4,n5,n6;
-   //FILE *f=fopen("liczba.txt", "r");
-   
-	nc2=10000;
-	nc3=29900;
-	nc1=45450;
-
-   
-   n1=h_n_1->GetEntries();
-   n2=h_n_2->GetEntries();
-   n3=h_n_3->GetEntries();
-    
-   n4=h_n_4->GetEntries();
-   n5=h_n_5->GetEntries();
-   n6=h_n_6->GetEntries();
-
-   h_n_2->Scale(s2/nc2);
-   h_n_3->Scale(s3/nc3);
-   
-   h_n_5->Scale(s2/nc2);
-   h_n_6->Scale(s3/nc3);
-  // h_n_3->Scale(s3);
-
-
-
-	h_n_2->Add(h_n_3,1);
-	h_n_2->Scale(100);
-	n2=h_n_2->GetEntries();
-    h_n_1->Scale(1/n1);
-    h_n_2->Scale(1/n2);
-    
-h_n_1->SetLineColor(1);
-h_n_2->SetLineColor(2);
-h_n_3->SetLineColor(3);
-
-	h_n_1->Rebin(5);
-	h_n_2->Rebin(5);
-	h_n_2->DrawNormalized("hist");
-	h_n_1->DrawNormalized("same");
- //h_n_3->Draw("same");
-
- c.SaveAs("plots2.pdf");
- c.Clear();
- 
- 	h_n_5->Add(h_n_6,1);
-	h_n_5->Scale(100);
-	n5=h_n_5->GetEntries();
-    h_n_4->Scale(1/n4);
-    h_n_5->Scale(1/n5);
-    
-	h_n_4->SetLineColor(1);
-	h_n_5->SetLineColor(2);
-	h_n_6->SetLineColor(3);
-
-	h_n_4->Rebin(5);
-	h_n_5->Rebin(5);
+	//BDT1->SetLineColor(1);
+	//BDT2->SetLineColor(2);
+	BDT3->SetLineColor(3);
+  BDT3->Rebin(20);
+  BDT3->Draw("hist");
 	
-	h_n_5->DrawNormalized("hist");
-	h_n_4->DrawNormalized("e same");
-	c.SaveAs("plots2.pdf");
+ /* if (BDT1->GetEntries()>0 && BDT2->GetEntries()>0 && BDT3->GetEntries()>0) 
+
+  {
+  BDT1->Rebin(20);
+  BDT2->Rebin(20);
   
+  BDT1->Draw("hist");
+	BDT2->Draw("hist same");
+  
+  }
+
+	c.SaveAs("plots2.pdf");
+
+  c.Clear();
+
+  Like1->SetLineColor(1);
+  Like2->SetLineColor(2);
+  Like3->SetLineColor(3);
+
+  if (true//Like1->GetEntries()>0 && Like2->GetEntries()>0 && Like3->GetEntries()>0)
+  ){
+  Like1->Rebin(20);
+  Like2->Rebin(20);
+  Like3->Rebin(20);
+  Like1->Draw("hist");
+  Like2->Draw("hist same");
+  Like3->Draw("hist same");
+  }
+
+  c.SaveAs("plots2.pdf");
+
+ 
+  c.Clear();
+
+  MLP1->SetLineColor(1);
+  MLP2->SetLineColor(2);
+  MLP3->SetLineColor(3);
+
+  
+  if (true//MLP1->GetEntries()>0 && MLP2->GetEntries()>0 && MLP3->GetEntries()>0)
+  ){
+  MLP1->Rebin(20);
+  MLP2->Rebin(20);
+  MLP3->Rebin(20);
+  MLP1->Draw("hist");
+  MLP2->Draw("hist same");
+  MLP3->Draw("hist same");
+  }
+
+  c.SaveAs("plots2.pdf");
+ c.Clear();
+
+  BDT3->Draw("hist");
+  c.SaveAs("plots2.pdf");
+   c.Clear();
+
+  LikeD->Rebin(20);
+  LikeP->Rebin(20);
+
+
+  LikeD->Draw("hist");
+  c.SaveAs("plots2.pdf");
+   c.Clear();
+
+  LikeP->Draw("hist");
+*/
+  c.SaveAs("plots2.pdf");
+
   c.SaveAs("plots2.pdf]"); // closing pdf
 
 

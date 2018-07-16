@@ -84,7 +84,7 @@ int TMVAClassification( TString myMethodList = "" )
    Use["CutsSA"]          = 0;
    //
    // 1-dimensional likelihood ("naive Bayes estimator")
-   Use["Likelihood"]      = 1;
+   Use["Likelihood"]      = 0;
    Use["LikelihoodD"]     = 0; // the "D" extension indicates decorrelated input variables (see option strings)
    Use["LikelihoodPCA"]   = 0; // the "PCA" extension indicates PCA-transformed input variables (see option strings)
    Use["LikelihoodKDE"]   = 0;
@@ -126,7 +126,7 @@ int TMVAClassification( TString myMethodList = "" )
    Use["SVM"]             = 0;
    //
    // Boosted Decision Trees
-   Use["BDT"]             = 1; // uses Adaptive Boost
+   Use["BDT"]             = 0; // uses Adaptive Boost
    Use["BDTG"]            = 0; // uses Gradient Boost
    Use["BDTB"]            = 0; // uses Bagging
    Use["BDTD"]            = 0; // decorrelation + Adaptive Boost
@@ -216,7 +216,7 @@ int TMVAClassification( TString myMethodList = "" )
    // note that you may also use variable expressions, such as: "3*var1/var2*abs(var3)"
    // [all types of expressions that can also be parsed by TTree::Draw( "expression" )]
 
-  dataloader->AddVariable( "xp", "Varxp", "units", 'F' );
+  /*dataloader->AddVariable( "xp", "Varxp", "units", 'F' );
   dataloader->AddVariable( "yp", "Varyp", "units", 'F' );
   dataloader->AddVariable( "zp", "Varzp", "units", 'F' );
   dataloader->AddVariable( "pxp", "Varpxp", "units", 'F' );
@@ -224,11 +224,13 @@ int TMVAClassification( TString myMethodList = "" )
   dataloader->AddVariable( "pzp", "Varpzp", "units", 'F' );
   dataloader->AddVariable( "xm", "Varxm", "units", 'F' );
   dataloader->AddVariable( "ym", "Varym", "units", 'F' );
-  dataloader->AddVariable( "zm", "Varzm", "units", 'F' );
+  dataloader->AddVariable( "zm", "Varzm", "units", 'F' );*/
   dataloader->AddVariable( "dist", "Vardist", "units", 'F' );
-  dataloader->AddVariable( "pxm", "Varpxm", "units", 'F' );
-  dataloader->AddVariable( "pym", "Varpym", "units", 'F' );
-  dataloader->AddVariable( "pzm", "Varpzm", "units", 'F' );
+  //dataloader->AddVariable( "pxm", "Varpxm", "units", 'F' );
+  dataloader->AddVariable( "mu_likep", "Varmup", "units", 'F' );
+  dataloader->AddVariable( "mu_likem", "Varmum", "units", 'F' );
+  //dataloader->AddVariable( "pym", "Varpym", "units", 'F' );
+  //dataloader->AddVariable( "pzm", "Varpzm", "units", 'F' );
   dataloader->AddSpectator( "minv", "Varminv", "units", 'F' );
   dataloader->AddVariable( "DeltPhi", "VarDel", "units", 'F' );
    // You can add so-called "Spectator variables", which are not used in the MVA training,
@@ -441,7 +443,7 @@ int TMVAClassification( TString myMethodList = "" )
 
    // TMVA ANN: MLP (recommended ANN) -- all ANNs in TMVA are Multilayer Perceptrons
    if (Use["MLP"])
-      factory->BookMethod( dataloader, TMVA::Types::kMLP, "MLP", "H:!V:NeuronType=tanh:VarTransform=N:NCycles=600:HiddenLayers=N+5:TestRate=5:!UseRegulator" );
+      factory->BookMethod( dataloader, TMVA::Types::kMLP, "MLP", "H:!V:NeuronType=tanh:VarTransform=N:NCycles=600:HiddenLayers=N+200;N+200:TestRate=5:!UseRegulator" );
 
    if (Use["MLPBFGS"])
       factory->BookMethod( dataloader, TMVA::Types::kMLP, "MLPBFGS", "H:!V:NeuronType=tanh:VarTransform=N:NCycles=600:HiddenLayers=N+5:TestRate=5:TrainingMethod=BFGS:!UseRegulator" );

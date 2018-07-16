@@ -48,7 +48,7 @@ void TMVAClassificationApplication( TString myMethodList = "" )
    Use["CutsSA"]          = 0;
    //
    // 1-dimensional likelihood ("naive Bayes estimator")
-   Use["Likelihood"]      = 1;
+   Use["Likelihood"]      = 0;
    Use["LikelihoodD"]     = 0; // the "D" extension indicates decorrelated input variables (see option strings)
    Use["LikelihoodPCA"]   = 0; // the "PCA" extension indicates PCA-transformed input variables (see option strings)
    Use["LikelihoodKDE"]   = 0;
@@ -78,7 +78,7 @@ void TMVAClassificationApplication( TString myMethodList = "" )
    Use["FDA_MCMT"]        = 0;
    //
    // Neural Networks (all are feed-forward Multilayer Perceptrons)
-   Use["MLP"]             = 1; // Recommended ANN
+   Use["MLP"]             = 0; // Recommended ANN
    Use["MLPBFGS"]         = 0; // Recommended ANN with optional training method
    Use["MLPBNN"]          = 0; // Recommended ANN with BFGS training method and bayesian regulator
    Use["CFMlpANN"]        = 0; // Depreciated ANN from ALEPH
@@ -137,10 +137,10 @@ void TMVAClassificationApplication( TString myMethodList = "" )
 
    // Create a set of variables and declare them to the reader
    // - the variable names MUST corresponds in name and type to those given in the weight file(s) used
-   Float_t var1, var2, xp, yp, zp, xm, ym, zm, pxp, pyp, pzp, pxm, pym, pzm, minv, dist, DeltPhi;
+   Float_t var1, var2, xp, yp, zp, xm, ym, zm, pxp, pyp, pzp, pxm, pym, pzm, minv, dist, DeltPhi, mulp, mulm;
    Float_t var3, var4;
 
-   reader->AddVariable( "xp", &xp);
+   /*reader->AddVariable( "xp", &xp);
    reader->AddVariable( "yp", &yp);
    reader->AddVariable( "zp", &zp);
    reader->AddVariable( "pxp", &pxp );
@@ -148,11 +148,13 @@ void TMVAClassificationApplication( TString myMethodList = "" )
    reader->AddVariable( "pzp", &pzp);
    reader->AddVariable( "xm",  &xm );
    reader->AddVariable( "ym",  &ym );
-   reader->AddVariable( "zm",  &zm );
-   reader->AddVariable( "dist:=abs(zm-zp)",  &dist );
-   reader->AddVariable( "pxm",  &pxm );
-   reader->AddVariable( "pym",  &pym);
-   reader->AddVariable( "pzm",  &pzm);
+   reader->AddVariable( "zm",  &zm );/*/
+   reader->AddVariable( "dist",  &dist );
+ //  reader->AddVariable( "pxm",  &pxm );
+   reader->AddVariable( "mu_likep",  &mulp );
+   reader->AddVariable( "mu_likem",  &mulm);
+  // reader->AddVariable( "pym",  &pym);
+  // reader->AddVariable( "pzm",  &pzm);
    reader->AddSpectator( "minv",  &minv );
    reader->AddVariable( "DeltPhi",  &DeltPhi );
 
@@ -227,6 +229,20 @@ void TMVAClassificationApplication( TString myMethodList = "" )
    TH1F *histPBdt(0);
    TH1F *histDnnGpu(0);
    TH1F *histDnnCpu(0);
+   /*TH1F h_minvBDT1("minvBDT1", "", 1000, 5, 40);
+   TH1F h_minvBDT2("minvBDT2", "", 1000, 5, 40);
+  
+   TH1F h_minvLike1("minvLike1", "", 1000, 5, 40);
+   TH1F h_minvLike2("minvLike2", "", 1000, 5, 40);
+   TH1F h_minvLike3("minvLike3", "", 1000, 5, 40);
+   TH1F h_minvMLP1("minvMLP1", "", 1000, 5, 40);
+   TH1F h_minvMLP2("minvMLP2", "", 1000, 5, 40);
+   TH1F h_minvMLP3("minvMLP3", "", 1000, 5, 40);
+   TH1F h_minvLikeD("minvD", "", 1000, 5, 40);
+   TH1F h_minvLPCA("minvPCA", "", 1000, 5, 40);*/
+
+   TH1F h_minvBDT3("minvBDT3", "", 1000, 5, 40);
+
 
    if (Use["Likelihood"])    histLk      = new TH1F( "MVA_Likelihood",    "MVA_Likelihood",    nbin, -1, 1 );
    if (Use["LikelihoodD"])   histLkD     = new TH1F( "MVA_LikelihoodD",   "MVA_LikelihoodD",   nbin, -1, 0.9999 );
@@ -282,7 +298,7 @@ void TMVAClassificationApplication( TString myMethodList = "" )
    // we'll later on use only the "signal" events for the test in this example.
    //
    TFile *input(0);
-   TString fname = "./tmva_class_example.root";
+   TString fname = "./~/Test/Testy/out_dat.root";
    if (!gSystem->AccessPathName( fname )) {
       input = TFile::Open( fname ); // check if file in local directory exists
    }
@@ -306,16 +322,22 @@ void TMVAClassificationApplication( TString myMethodList = "" )
    std::cout << "--- Select signal sample" << std::endl;
    TTree* theTree = (TTree*)input->Get("ntuple");
    Float_t userVar1, userVar2;
-   theTree->SetBranchAddress( "xp", &xp );
+
+  /* theTree->SetBranchAddress( "xp", &xp );
    theTree->SetBranchAddress( "yp", &yp );
    theTree->SetBranchAddress( "zp", &zp );
+   theTree->SetBranchAddress( "pxp", &pzp );
+   theTree->SetBranchAddress( "pyp", &pxp );
+   theTree->SetBranchAddress( "pzp", &pym );
    theTree->SetBranchAddress( "xm", &xm );
    theTree->SetBranchAddress( "ym", &ym );
-   theTree->SetBranchAddress( "zm", &zm );
-   theTree->SetBranchAddress( "pzp", &pzp );
-   theTree->SetBranchAddress( "pxm", &pxp );
-   theTree->SetBranchAddress( "pym", &pym );
-   theTree->SetBranchAddress( "pzm", &pzm );
+   theTree->SetBranchAddress( "zm", &zm );*/
+   theTree->SetBranchAddress( "mu_likep", &mulp );
+   theTree->SetBranchAddress( "mu_likem", &mulm );
+   theTree->SetBranchAddress( "dist", &dist );
+  // theTree->SetBranchAddress( "pxm", &pzp );
+  // theTree->SetBranchAddress( "pym", &pxp );
+  // theTree->SetBranchAddress( "pzm", &pzm );
    theTree->SetBranchAddress( "minv", &minv );
    theTree->SetBranchAddress( "DeltPhi", &DeltPhi );
    // Efficiency calculator for cut method
@@ -379,6 +401,29 @@ void TMVAClassificationApplication( TString myMethodList = "" )
       if (Use["Category"     ])   histCat    ->Fill( reader->EvaluateMVA( "Category method"      ) );
       if (Use["Plugin"       ])   histPBdt   ->Fill( reader->EvaluateMVA( "P_BDT method"         ) );
 
+      
+      Float_t varBDT = reader->EvaluateMVA("BDT method");
+    /*  Float_t varMLP = reader->EvaluateMVA("MLP method");
+      Float_t varLike = reader->EvaluateMVA("Likelihood method");
+      Float_t varLikeD = reader->EvaluateMVA("LikelihoodD method");
+      Float_t varPCA = reader->EvaluateMVA("LikelihoodPCA method");*/
+
+     // if (varBDT>0) {h_minvBDT1.Fill(minv);}
+     // if (varBDT>0.2) {h_minvBDT2.Fill(minv);}
+      if (varBDT>0.35) {h_minvBDT3.Fill(minv);}
+
+      /*if (varMLP>0.96) {h_minvMLP1.Fill(minv);}
+      if (varMLP>0.97) {h_minvMLP2.Fill(minv);}
+      if (varMLP>0.98) {h_minvMLP3.Fill(minv);}
+
+      if (varLike>0.2)   {h_minvLike1.Fill(minv);}
+      if (varLike>0.3) {h_minvLike2.Fill(minv);}
+      if (varLike>0.4) {h_minvLike3.Fill(minv);}
+
+      if (varLikeD>0.05)  {h_minvLikeD.Fill(minv);}
+      if (varPCA>0.85)    {h_minvLPCA.Fill(minv);}
+    */
+
       // Retrieve also per-event error
       if (Use["PDEFoam"]) {
          Double_t val = reader->EvaluateMVA( "PDEFoam method" );
@@ -429,7 +474,7 @@ void TMVAClassificationApplication( TString myMethodList = "" )
 
    // Write histograms
 
-   TFile *target  = new TFile( "TMVApp.root","RECREATE" );
+   TFile *target  = new TFile( "TMVApppy.root","RECREATE" );
    if (Use["Likelihood"   ])   histLk     ->Write();
    if (Use["LikelihoodD"  ])   histLkD    ->Write();
    if (Use["LikelihoodPCA"])   histLkPCA  ->Write();
@@ -465,6 +510,24 @@ void TMVAClassificationApplication( TString myMethodList = "" )
    if (Use["Category"     ])   histCat    ->Write();
    if (Use["Plugin"       ])   histPBdt   ->Write();
 
+ //  h_minvBDT1.Write();
+ //  h_minvBDT2.Write();
+   h_minvBDT3.Write();
+
+  /* h_minvMLP1.Write();
+   h_minvMLP2.Write();
+   h_minvMLP3.Write();
+ 
+   h_minvLike1.Write();
+   h_minvLike2.Write();
+   h_minvLike3.Write();
+
+   h_minvLikeD.Write();
+   h_minvLPCA.Write();*/
+
+   
+  
+
    // Write also error and significance histos
    if (Use["PDEFoam"]) { histPDEFoam->Write(); histPDEFoamErr->Write(); histPDEFoamSig->Write(); }
 
@@ -472,7 +535,7 @@ void TMVAClassificationApplication( TString myMethodList = "" )
    if (Use["Fisher"]) { if (probHistFi != 0) probHistFi->Write(); if (rarityHistFi != 0) rarityHistFi->Write(); }
    target->Close();
 
-   std::cout << "--- Created root file: \"TMVApp.root\" containing the MVA output histograms" << std::endl;
+   std::cout << "--- Created root file: \"TMVApppy.root\" containing the MVA output histograms" << std::endl;
 
    delete reader;
 
