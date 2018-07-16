@@ -9,31 +9,60 @@
 #include <vector>
 #include <TLorentzVector.h>
 
-
-float skal (TLorentzVector v1,TLorentzVector v2)
-{
-return v1[0]*v2[0]+v1[1]*v2[1]+v1[2]*v2[2];
-}
-
-
+using namespace std;
 void ntuple::Loop()
 {
    if (fChain == 0) return;
 
-   Long64_t nentries = fChain->GetEntriesFast();
+   Long64_t nentries = fChain->GetEntries();
 
    TFile output(this->outputFileName.data(), "recreate");
-   TH1F h_nparticles("h_nparticles", "", 100, 0, 1000);
-   TH1F h_x("h_x", "", 100, -1e-4, 1e-4);
-   TH1F h_mu_like("h_mu_like", "", 100, 0, 1);
-   TH1F h_mu("h_mu", "", 100, 0, 1);
-   TH1F h_minv("minv", "", 300, 0, 40);
-float sa, sb, sab;
-   vector <TLorentzVector> VGp, VGpd;
-   vector <TLorentzVector> VGm, VGmd;
+  // TH1F h_nparticles("h_nparticles", "", 100, 0, 1000);
+  // TH1F h_x("h_x", "", 100, -1e-4, 1e-4);
+  // TH1F h_mu_like("h_mu_like", "", 100, 0, 1);
+   //TH1F h_mu("h_mu", "", 100, 0, 1);
+   //TH1F h_minv("minv", "", 300, 0, 40);
+   TTree *out = new TTree("ntuple","ntuple");
+
+
+    float sa, sb, sab, minv;
+    float angl=0, dis=0;
+    float xp,yp,zp,pxp,pyp,pzp,xm,ym,zm,pxm,pym,pzm,mu_likep,mu_likem, dist;
+
+
    TLorentzVector xyze;
+   
+   vector <TLorentzVector> vGp, vGpd;
+   vector <TLorentzVector> vGm, vGmd;
+   vector <float> vmu_likem, vmu_likep;
+   
+   
+
+      out->Branch("xp", &xp, "xp/D");
+      out->Branch("yp", &yp, "yp/D");
+	    out->Branch("zp", &zp, "zp/D");
+      out->Branch("xm", &pxp, "zm/D");
+      out->Branch("ym", &pyp, "ym/D");
+      out->Branch("zm", &pzp, "zm/D");
+      out->Branch("pxp", &xm, "pxp/D");
+      out->Branch("pyp", &ym, "pyp/D");
+      out->Branch("pzp", &zm, "pzp/D");
+      out->Branch("pxm", &pxm, "pxm/D");
+      out->Branch("pym", &pym, "pym/D");
+      out->Branch("pzm", &pzm, "pzm/D");
+      out->Branch("dist", &dist, "dist/D");
+      out->Branch("mu_likep", &mu_likep, "mu_likep/D");
+      out->Branch("mu_likem", &mu_likem, "mu_likem/D");
+      
+      out->Branch("minv", &minv, "MINV/F");
+      out->Branch("DeltPhi", &angl, "DP/F");
+      
+    bool isSignal = ( ((std::string)(this->outputFileName.data())).find("sig")  )< 100;
+    cout<<" isSignal = "<<isSignal<<endl;
+    
+
    int kk=0;
-   TH2F h_x_y("h_x_y", "", 100, -1e-4, 1e-4, 100, -1e-4, 1e-4);
+  
 
    Long64_t nbytes = 0, nb = 0;
 
@@ -43,51 +72,86 @@ float sa, sb, sab;
       nb = fChain->GetEntry(jentry);   nbytes += nb;
       // if (Cut(ientry) < 0) continue;
       int nparticles = id->size();
-      h_nparticles.Fill(nparticles);
+     // h_nparticles.Fill(nparticles);
       for(int particle=0; particle < nparticles; particle++){
-	h_x.Fill(x->at(particle));
-	h_x_y.Fill(x->at(particle), y->at(particle));
-	h_mu_like.Fill(mu_like->at(particle));
+//	h_x.Fill(x->at(particle));
+	//h_x_y.Fill(x->at(particle), y->at(particle));
+	//h_mu_like.Fill(mu_like->at(particle));
 
-	if (id->at(particle)==13||id->at(particle)==-13) {h_mu.Fill(mu_like->at(particle));}
 
-        if (mu_like->at(particle)>0.85)
-		 {
+	if ( mu_like->at(particle)>0.5 &&  ( (isSignal && (id->at(particle)==13||id->at(particle)==-13))   || !isSignal ))
+	 {
 		if(charge->at(particle)>0)
 		{
-		xyze.SetPxPyPzE(px->at(particle),py->at(particle),pz->at(particle),e->at(particle)); VGp.push_back(xyze);
-		xyze.SetXYZM(x->at(particle),y->at(particle),z->at(particle),e->at(particle)); VGpd.push_back(xyze);
+		xyze.SetPxPyPzE(px->at(particle),py->at(particle),pz->at(particle),e->at(particle)); vGp.push_back(xyze);
+		xyze.SetXYZM(x->at(particle),y->at(particle),z->at(particle),e->at(particle)); vGpd.push_back(xyze);
+		vmu_likep.push_back(mu_like->at(particle));
 		}
 
 		if(charge->at(particle)<0)
 		{
-		xyze.SetPxPyPzE(px->at(particle),py->at(particle),pz->at(particle),e->at(particle)); VGm.push_back(xyze);
-		xyze.SetXYZM(x->at(particle),y->at(particle),z->at(particle),e->at(particle)); VGmd.push_back(xyze);
+		xyze.SetPxPyPzE(px->at(particle),py->at(particle),pz->at(particle),e->at(particle)); vGm.push_back(xyze);
+		xyze.SetXYZM(x->at(particle),y->at(particle),z->at(particle),e->at(particle)); vGmd.push_back(xyze);
+		vmu_likem.push_back(mu_like->at(particle));
 		}
+	}
 
-		 }
 
-		                                          }
-        float angl=0, dis=0;
-        for (int i=0; i<VGp.size(); i++)
+
+
+                                                }
+
+        int proc=100.0*(jentry+1)/nentries;
+        cout<<"Wejscie: "<<jentry+1<<". Wykonano: "<<proc<<"%."<< "\r"<<flush;
+
+//cout<<endl;
+//cout<<vGp.size()<<endl;
+     for (int i=0; i<vGp.size(); i++)
    {
-        for (int j=0; j<VGm.size(); j++)
-        {
-        angl=VGp[i].DeltaPhi(VGm[j]);
-        dis=VGpd[i][2]-VGmd[j][2];
-        if (abs(angl)>1&&abs(dis)<0.04)
-      {h_minv.Fill((VGp[i]+VGm[j]).M());}
+        for (int j=0; j<vGm.size(); j++)
+        {    
+		    minv=(vGp[i]+vGm[j]).M();
+	        angl=vGp[i].DeltaPhi(vGm[j]);
+	        xp=vGpd[i][0];
+	        yp=vGpd[i][1];
+	        zp=vGpd[i][2];
+	        pxp=vGp[i][0];
+	        pyp=vGp[i][1];
+	        pzp=vGp[i][2];
+	        xm=vGmd[j][0];
+	        ym=vGmd[j][1];
+	        zm=vGmd[j][2];
+	        pxm=vGm[j][0];
+	        pym=vGm[j][1];
+	        pzm=vGm[j][2];
+          dist=abs(zp-zm);
+	        mu_likep=vmu_likep[i];
+	        mu_likem=vmu_likem[j];
+	        
+	        out->Fill();
+	        
+
+ 
+
+
+     
+
+
         }
 
    }
-   VGp.resize(0);
-   VGm.resize(0);
-   VGpd.resize(0);
-   VGmd.resize(0);
 
 
+   
+   vGp.resize(0);
+   vGm.resize(0);
+   vGpd.resize(0);
+   vGmd.resize(0);
+   vmu_likep.resize(0);
+   vmu_likem.resize(0);
    }
 
+   out->Write();
 
    output.Write();
    output.Close();
