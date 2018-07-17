@@ -16,9 +16,9 @@ download_full:
 	wget http://ppss.ifj.edu.pl/materials_2017/MC_resonance_search_background_4.root
 
 run: ntuple.exe data.root MC_resonance_search_signal.root MC_resonance_search_background_small.root
-	./ntuple.exe out_dat.root data.root
-	./ntuple.exe out_sig.root MC_resonance_search_signal.root
-	./ntuple.exe out_bkg.root MC_resonance_search_background_small.root
+	./ntuple.exe out_datk.root data.root
+	./ntuple.exe out_sigk.root MC_resonance_search_signal.root
+	./ntuple.exe out_bkgk.root MC_resonance_search_background_small.root
 
 run_big: ntuple.exe data.root MC_resonance_search_signal.root MC_resonance_search_background_0.root
 	./ntuple.exe out_dat.root data.root

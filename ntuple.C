@@ -50,12 +50,12 @@ void ntuple::Loop()
       out->Branch("pxm", &pxm, "pxm/F");
       out->Branch("pym", &pym, "pym/F");
       out->Branch("pzm", &pzm, "pzm/F");
-      out->Branch("dist", &dist, "dist/F");
+      //out->Branch("dist", &dist, "dist/F");
       out->Branch("mu_likep", &mu_likep, "mu_likep/F");
       out->Branch("mu_likem", &mu_likem, "mu_likem/F");
       
       out->Branch("minv", &minv, "MINV/F");
-      out->Branch("DeltPhi", &angl, "DP/F");
+      //out->Branch("DeltPhi", &angl, "DP/F");
       
     bool isSignal = ( ((std::string)(this->outputFileName.data())).find("sig")  )< 100;
     cout<<" isSignal = "<<isSignal<<endl;
@@ -111,7 +111,7 @@ void ntuple::Loop()
         for (int j=0; j<vGm.size(); j++)
         {    
 		    minv=(vGp[i]+vGm[j]).M();
-	        angl=vGp[i].DeltaPhi(vGm[j]);
+	        //angl=vGp[i].DeltaPhi(vGm[j]);
 	        xp=vGpd[i][0];
 	        yp=vGpd[i][1];
 	        zp=vGpd[i][2];
@@ -124,7 +124,7 @@ void ntuple::Loop()
 	        pxm=vGm[j][0];
 	        pym=vGm[j][1];
 	        pzm=vGm[j][2];
-          dist=abs(zp-zm);
+          //dist=abs(zp-zm);
 	        mu_likep=vmu_likep[i];
 	        mu_likem=vmu_likem[j];
 	        
