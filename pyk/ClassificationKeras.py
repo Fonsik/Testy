@@ -30,7 +30,7 @@ dataloader = TMVA.DataLoader('dataset')
 #for branch in signal.GetListOfBranches():
  #   dataloader.AddVariable(branch.GetName())
 
-'''dataloader.AddVariable( "yp")
+dataloader.AddVariable( "yp")
 dataloader.AddVariable( "zp")
 dataloader.AddVariable( "pxp")
 dataloader.AddVariable( "pyp")
@@ -40,9 +40,9 @@ dataloader.AddVariable( "ym")
 dataloader.AddVariable( "zm" )
 dataloader.AddVariable( "pxm")
 dataloader.AddVariable( "pym")
-dataloader.AddVariable( "pzm")'''
-dataloader.AddVariable( "dist")
-dataloader.AddVariable( "DeltPhi")
+dataloader.AddVariable( "pzm")
+'''dataloader.AddVariable( "dist")
+dataloader.AddVariable( "DeltPhi")'''
 dataloader.AddVariable( "mu_likep")
 dataloader.AddVariable( "mu_likem")
 dataloader.AddSpectator( "minv" )
@@ -57,8 +57,19 @@ dataloader.PrepareTrainingAndTestTree(TCut(''),
 
 # Define model
 model = Sequential()
-model.add(Dense(64, activation='relu', W_regularizer=l2(1e-5), input_dim=4))
-model.add(Dense(64, activation='relu', W_regularizer=l2(1e-5), input_dim=4))
+model.add(Dense(64, activation='relu', W_regularizer=l2(1e-5), input_dim=14))
+model.add(Dense(64, activation='relu', W_regularizer=l2(1e-5), input_dim=14))
+model.add(Dense(64, activation='relu', W_regularizer=l2(1e-5), input_dim=14))
+model.add(Dense(64, activation='relu', W_regularizer=l2(1e-5), input_dim=14))
+model.add(Dense(64, activation='relu', W_regularizer=l2(1e-5), input_dim=14))
+model.add(Dense(64, activation='relu', W_regularizer=l2(1e-5), input_dim=14))
+model.add(Dense(64, activation='relu', W_regularizer=l2(1e-5), input_dim=14))
+model.add(Dense(64, activation='relu', W_regularizer=l2(1e-5), input_dim=14))
+model.add(Dense(64, activation='relu', W_regularizer=l2(1e-5), input_dim=14))
+model.add(Dense(64, activation='relu', W_regularizer=l2(1e-5), input_dim=14))
+model.add(Dense(64, activation='relu', W_regularizer=l2(1e-5), input_dim=14))
+model.add(Dense(64, activation='relu', W_regularizer=l2(1e-5), input_dim=14))
+model.add(Dense(64, activation='relu', W_regularizer=l2(1e-5), input_dim=14))
 model.add(Dense(2, activation='softmax'))
 
 # Set loss and optimizer
@@ -73,7 +84,7 @@ model.summary()
 #factory.BookMethod(dataloader, TMVA.Types.kFisher, 'Fisher',
 #                   '!H:!V:Fisher:VarTransform=D,G')
 factory.BookMethod(dataloader, TMVA.Types.kPyKeras, 'PyKeras',
-                   'H:!V:VarTransform=D,G:FilenameModel=model.h5:NumEpochs=40:BatchSize=32')
+                   'H:!V:VarTransform=D,G:FilenameModel=model.h5:NumEpochs=50:BatchSize=32')
 factory.BookMethod( dataloader,  TMVA.Types.kBDT, "BDT",
                            "!H:!V:NTrees=850:MinNodeSize=2.5%:MaxDepth=3:BoostType=AdaBoost:AdaBoostBeta=0.5:UseBaggedBoost:BaggedSampleFraction=0.5:SeparationType=GiniIndex:nCuts=20" )
 
